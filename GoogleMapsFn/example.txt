@@ -1,0 +1,47 @@
+text before{{#googlemap:
+lat=55.773882
+|lng=37.615879
+| zoom =  16  
+|width=675
+|height=250
+|caption=Hello, [[world]]!
+* How
+* are
+* you?
+|edit=1
+|55.774195, 37.617209 вход [[со стороны]]
+|55.777096, 37.627416 выход в [[другую сторону]]
+}}
+a clone to check multiple editor
+instances{{#googlemap:lat=55.783882|lng=37.635879|zoom=16|width=675|height=25em|caption=Hello,
+new world!
+
+And how are you?|edit=1|align=left|55.774195, 37.617209 вход [[со стороны]]|55.777096, 37.627416 выход в [[другую сторону]]}}
+bad longitude
+{{#googlemap:lat=55.773882|lng=237.615879|zoom=16|width=675|height=250|align=right
+|55.774195, 37.617209 вход [[со стороны]]
+|55.777096, 37.627416 выход в [[другую сторону]]
+}}
+bad inner text 1
+{{#googlemap:lat=55.773882|lng=37.615879|zoom=16|width=675|height=250|align=right
+|37.617209 вход [[со стороны]]
+|55.777096, 37.627416 выход в [[другую сторону]]
+}}
+bad inner text 2
+{{#googlemap: lat  =55.773882|lng=37.615879|zoom=16|width=675|height=250|align=right
+|вход [[со стороны]]
+|55.777096, 37.627416 выход в [[другую сторону]]
+}}
+bad inner text 3
+{{#googlemap:lat=55.773882|lng=237.615879|zoom=16|width=675|height=250|align=right
+|55.774195, 37.617209 вход [[со стороны]]
+|55.777096, 337.627416 выход в [[другую сторону]]
+}}
+text after
+{{#googlemap:lat=45.773882|lng=27.615879|zoom=12|width=  100%  |height=  20em  |caption=Навигация ''по [[Москве]]''
+|45.774195, 27.617209 вход [[со стороны]]
+
+и добавим еще [[один]] параграф.
+
+|45.777096, 27.627416 выход в [[другую сторону]]
+}}

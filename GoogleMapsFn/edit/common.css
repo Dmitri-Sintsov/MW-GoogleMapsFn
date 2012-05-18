@@ -1,0 +1,129 @@
+.gmfn_canvas textarea.gmfn_text {
+	box-sizing: border-box;
+	-webkit-box-sizing:border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	resize: none;
+	margin-top: 10px;
+}
+
+div.gmfn_caption_text, span.gmfn_marker_text, div.gmfn_tag_footer {
+	white-space: pre;
+}
+
+div.gmfn_editor {
+	text-align: left;
+}
+
+div.gmfn_editor span.gmfn_drag_switch {
+	display: none;
+}
+
+div.gmfn_showhide {
+	display:none;
+	background-color: white; /* IE8 fix */
+}
+
+div.gmfn_row {
+	display: table-row;
+}
+
+div.gmfn_tag_header {
+	width: 800px;
+	max-width: 800px;
+	white-space: pre;
+	overflow: auto;
+}
+
+div.gmfn_toolbar table {
+	width: 100%;
+}
+
+div.gmfn_toolbar > table td {
+	text-align: center;
+}
+
+div.gmfn_showhide > div.gmfn_tag_preview {
+	background-color: Beige;
+	border: 2px solid Teal;
+	padding: 0.5em;
+}
+
+input.gmfn_edit_lat {
+	width: 10em;
+}
+
+input.gmfn_edit_lng {
+	width: 10em;
+}
+
+span.gmfn_edit_lat, span.gmfn_edit_lng {
+	font-weight: bold;
+}
+
+div.gmfn_toolbar input.gmfn_edit_width {
+	width: 5em;
+}
+
+div.gmfn_toolbar input.gmfn_edit_height {
+	width: 5em;
+}
+
+div.gmfn_toolbar div.gmfn_edit_zoom {
+	width: 24em;
+	margin-left: 6em;
+}
+
+div.gmfn_toolbar textarea.gmfn_edit_caption {
+	min-width: 100%;
+	width: 100%;
+	height: 6em;
+}
+
+div.gmfn_lines {
+	width: 800px;
+	max-width: 800px;
+	background-color: LightCyan;
+	height: auto;
+	max-height: 10em;
+	overflow: auto;
+	border-bottom: 1px dashed gray;
+	margin: 0.1em 0 0.5em 0.5em;
+}
+
+div.gmfn_lines > div {
+	border-top: 1px dashed gray;
+	border-left: 1px dashed gray;
+	border-right: 1px dashed gray;
+	padding: 0.1em 0.5em 0.1em 0.5em;
+	cursor: pointer;
+}
+
+div.gmfn_current_line {
+	background-color: AntiqueWhite;
+}
+
+div.gmfn_edited_line {
+	color: Navy;
+}
+
+div.gmfn_lines > div > span {
+	padding: 0 0.2em 0 0.2em;
+}
+
+div.gmfn_lines > div > input.gmfn_remove_marker {
+	float: right;
+}
+
+div.gmfn_showhide input[type="text"].ui-button, div.gmfn_showhide textarea.ui-button {
+    font: inherit;
+    color: inherit;
+    text-align: left;
+	outline: none;
+}
+
+div.gmfn_resizable {
+	border: 1px dashed blue;
+}
