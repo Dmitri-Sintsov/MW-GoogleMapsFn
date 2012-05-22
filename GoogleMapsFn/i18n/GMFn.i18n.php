@@ -5,7 +5,7 @@
  *
  * @file
  * @ingroup Extensions
- * @version 0.1
+ * @version 0.1.1
  * @author Dmitriy Sintsov <questpc@rambler.ru>
  * @link https://www.mediawiki.org/wiki/Extension:GoogleMapsFn
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later

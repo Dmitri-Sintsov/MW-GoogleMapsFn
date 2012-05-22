@@ -5,7 +5,7 @@
  *
  * @file
  * @ingroup Extensions
- * @version 0.1
+ * @version 0.1.1
  * @author Dmitriy Sintsov <questpc@rambler.ru>
  * @link https://www.mediawiki.org/wiki/Extension:GoogleMapsFn
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
@@ -19,7 +19,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 $wgExtensionCredits['parserhook'][] = array( 
 	'path' => __FILE__,
 	'name' => 'GoogleMapsFn',
-	'version' => '0.1',
+	'version' => '0.1.1',
 	'author' => 'Dmitriy Sintsov',
 	'descriptionmsg' => 'gmfn-desc',
 	'url' => 'https://www.mediawiki.org/wiki/Extension:GoogleMapsFn'
@@ -27,6 +27,10 @@ $wgExtensionCredits['parserhook'][] = array(
 
 GMFn::init();
 
+/**
+ * Extension main class: initialization, common methods (used across the classes),
+ * hooks and parser function.
+ */
 class GMFn {
 
 	const MAP_TAG = '<div class="gmfn_canvas"';
@@ -38,10 +42,13 @@ class GMFn {
 	// instances of Parser and Title used to selectively parse input text
 	static $parser;
 	static $title;
+	// current instance of OutputPage
+	static $out;
 
 	// whether the text of page was already checked for presence of GMFn data
 	static $textChecked = false;
 
+	// list of extension's ResourceLoader modules in "compact" format
 	static private $mapModules = array(
 		'jquery.ui.prettybuttons' => array(
 			'scripts' => 'jquery.ui.prettybuttons.js',
@@ -111,7 +118,7 @@ class GMFn {
 				'map.markers.js',
 				'map.properties.js'
 			),
-			// warning: when the module is loaded at clientside, messages are not loaded
+			// warning: when the module was loaded at clientside, messages were not loaded
 			'messages' => array(
 				'gmfn-show-code',
 				'gmfn-change-center',
@@ -162,9 +169,32 @@ class GMFn {
 	# {{#googlemap}} parser function hook counter
 	static $fnCount = 0;
 
+	/**
+	 * Populates 'localBasePath' / 'remoteExtPath' keys of self::$mapModules
+	 */
+	static function preprocessModules() {
+		foreach ( self::$mapModules as $moduleName => &$module ) {
+			if ( array_key_exists( 'path', $module ) ) {
+				// hash is a special path that indicates that
+				// path matches module name
+				$path = '/' . ( ($module['path'] === '#') ?
+					$moduleName : $module['path'] );
+				unset( $module['path'] );
+			} else {
+				$path = '';
+			}
+			$module['localBasePath'] = self::$extDir . $path;
+			$module['remoteExtPath'] = "GoogleMapsFn{$path}";
+		}
+	}
+
 	static function init() {
 		global $wgScriptPath, $wgResourceModules, $wgExtensionMessagesFiles;
 		global $wgHooks, $wgAutoloadClasses;
+		# prerequisites
+		if ( !class_exists( 'RequestContext' ) ) {
+			die( "This extension uses RequestContext class which is available since MediaWiki 1.18\n" );
+		}
 		if ( !isset( $wgResourceModules ) ) {
 			die( "This extension requires ResourceLoader which is available since MediaWiki 1.17\n" );
 		}
@@ -180,19 +210,7 @@ class GMFn {
 		$wgAutoloadClasses['GMFnMap'] = self::$extDir . '/GMFnMap.php';
 		$wgAutoloadClasses['GMFnMarkers'] = self::$extDir . '/GMFnMarkers.php';
 
-		foreach ( self::$mapModules as $moduleName => &$module ) {
-			if ( array_key_exists( 'path', $module ) ) {
-				// hash is a special path that indicates that
-				// path matches module name
-				$path = '/' . ( ($module['path'] === '#') ?
-					$moduleName : $module['path'] );
-				unset( $module['path'] );
-			} else {
-				$path = '';
-			}
-			$module['localBasePath'] = self::$extDir . $path;
-			$module['remoteExtPath'] = "GoogleMapsFn{$path}";
-		}
+		self::preprocessModules();
 		$wgResourceModules += self::$mapModules;
 
 		$wgExtensionMessagesFiles['GMFn'] = self::$extDir . '/i18n/GMFn.i18n.php';
@@ -221,26 +239,16 @@ class GMFn {
 	}
 
 	static protected function getOutput() {
-		if ( class_exists( 'RequestContext' ) ) {
-			# MW 1.18+
-			# so-called 'last resort'
-			return RequestContext::getMain()->getOutput();
-		} else {
-			# MW 1.17
-			return $GLOBALS['wgOut'];
+		if ( !is_object( self::$out ) ) {
+			# last resort
+			self::$out = RequestContext::getMain()->getOutput();
 		}
 	}
 
-	static protected function getTitle( $out = null ) {
-		if ( !is_object( $out ) ) {
-			$out = self::getOutput();
+	static protected function getTitle() {
+		if ( !is_object( self::$title ) ) {
+			self::$title = self::$out->getContext()->getTitle();
 		}
-		if ( method_exists( $out, 'getContext' ) ) {
-			// MW 1.18+
-			return $out->getContext()->getTitle();
-		}
-		// MW 1.17
-		return $GLOBALS['wgTitle'];
 	}
 
 	/**
@@ -249,16 +257,52 @@ class GMFn {
 	 */
 	static function onParserFirstCallInit( $parser ) {
 		self::$parser = clone $parser;
-		self::$title = self::getTitle();
-		# setup tag hook
+		self::getOutput();
+		self::getTitle();
+		# setup parser function hook
 		$parser->setFunctionHook( 'googlemap', array( __CLASS__, 'renderMap' ), SFH_OBJECT_ARGS );
 		return true;
 	}
 
-	static protected function checkModule( OutputPage $out ) {
-		if ( !is_object( self::$title ) ) {
-			self::$title = self::getTitle( $out );
+	/**
+	 * Determines, whether all of the requested 'dependencies' modules
+	 * are registered by ResourceLoader.
+	 * Currently this is used to detect MW 1.18.2, which does not have
+	 * 'mediawiki.jqueryMsg' module.
+	 */
+	static protected function checkAllModulesExists() {
+		$allModules = array_keys( self::$mapModules );
+		foreach ( self::$mapModules as $moduleName => $moduleDefinition ) {
+			if ( !array_key_exists( 'dependencies', $moduleDefinition ) ) {
+				continue;
+			}
+			if ( is_array( $moduleDefinition['dependencies'] ) ) {
+				$allModules += $moduleDefinition['dependencies'];
+			} else {
+				# We do not check for multiple matches in values:
+				# it would only decrease performance in this case.
+				$allModules[] = $moduleDefinition['dependencies'];
+			}
 		}
+		$nonExistantModules = array_diff(
+			$allModules,
+			self::$out->getResourceLoader()->getModuleNames()
+		);
+		if ( count( $nonExistantModules ) > 0 ) {
+			throw new MWException( 'Cannot find requested module(s): ' .
+				implode( ',', $nonExistantModules ) .
+				' in ' . __METHOD__
+			);
+		}
+	}
+
+	/**
+	 * Conditionally loads 'ext.gmfn.edit' or 'ext.gmfn.view' module only for
+	 * required pages, by checking page's ParserOutput (both in non-cached and
+	 * cached page loads).
+	 */
+	static protected function checkModule() {
+		self::getTitle();
 		# MessageBlobStore::clear();
 		# do not check the text twice;
 		# also simple sanity check for CLI calls and special pages (if any)
@@ -288,49 +332,66 @@ class GMFn {
 				'ext.gmfn.edit' : 'ext.gmfn.view';
 			# There are references on the page, load the extension's startup module.
 			unset( $text );
-			$out->addModules( $module );
+			# make sure all of dependant modules are actually available
+			self::checkAllModulesExists();
+			# load view or edit module
+			self::$out->addModules( $module );
 		}
 		return true;
 	}
 
+	/**
+	 * Non-cached page load.
+	 */
 	static function onBeforePageDisplay( OutputPage &$out, Skin &$skin ) {
-		return self::checkModule( $out );
+		self::$out = $out;
+		return self::checkModule();
 	}
 
+	/**
+	 * Cached page load. If there is a better hook - let me know.
+	 */
 	static function onOutputPageCheckLastModified( &$modifiedTimes ) {
-		return self::checkModule( self::getOutput() );
+		self::getOutput();
+		return self::checkModule();
 	}
 
+	/**
+	 * Parses provided wiki text in context of current title (page).
+	 * Used to process map markers wikitext.
+	 */
 	static function parseWikiText( $text ) {
 		return self::$parser->parse( $text, self::$title, new ParserOptions() )->getText();
 	}
 
 	/**
-	 * Convert map and marker data into html which will be parsed by javascript.
+	 * #googlemapfn parser function hook.
 	 *
 	 * @param  &$parser Parser
 	 *   The wikitext parser.
 	 * @param  &$frame PPFrame
-	 * @param  $input string
+	 *   Current parser frame (used to expand template arguments).
+	 * @param  $args array
+	 *   parameters of parser function
 	 * @return map html 
 	 */
 	static function renderMap( Parser &$parser, PPFrame $frame, array $args ) {
 		$attrs = array();
-		$innerTexts = array();
+		$rawMarkers = array();
 		foreach ( $args as $arg ) {
 			if ( !is_string( $arg ) ) {
 				$arg = trim( $frame->expand( $arg ) );
 			}
 			preg_match( '/^([a-z.]+)\s*=\s*(.*)$/si', $arg, $match );
 			if ( count( $match ) < 3 ) {
-				$innerTexts[] = $arg;
+				$rawMarkers[] = $arg;
 			} else {
 				$attrs[$match[1]] = $match[2];
 			}
 		}
 		# sdv_dbg('attrs',$attrs);
-		# sdv_dbg('innerTexts',$innerTexts);
-		return strval( new GMFnMap( $innerTexts, $attrs, self::$fnCount++ ) );
+		# sdv_dbg('rawMarkers',$rawMarkers);
+		return strval( new GMFnMap( $rawMarkers, $attrs, self::$fnCount++ ) );
 	}
 
 } /* end of GMFn class */

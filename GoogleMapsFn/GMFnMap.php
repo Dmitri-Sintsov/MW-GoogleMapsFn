@@ -5,7 +5,7 @@
  *
  * @file
  * @ingroup Extensions
- * @version 0.1
+ * @version 0.1.1
  * @author Dmitriy Sintsov <questpc@rambler.ru>
  * @link https://www.mediawiki.org/wiki/Extension:GoogleMapsFn
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
@@ -43,6 +43,7 @@ class GMFnMap {
 		)
 	);
 
+	# map default / min / max zoom
 	static private $zoom = array(
 		'def' => 15,
 		'min' => 0,
@@ -50,61 +51,80 @@ class GMFnMap {
 	);
 
 	protected $mapIndex = null;
-	protected $inputs;
+	protected $rawMarkers;
 	protected $attrs;
 
-	function __construct( $inputs, $attrs, $mapIndex ) {
-		$this->inputs = $inputs;
+	function __construct( $rawMarkers, $attrs, $mapIndex ) {
+		$this->rawMarkers = $rawMarkers;
 		$this->attrs = $attrs;
 		$this->mapIndex = $mapIndex;
 	}
 
+	/**
+	 * Validate latitude / longitude map attributes.
+	 */
+	function validateLatLng() {
+		$lat = array_key_exists( 'lat', $this->attrs ) ? $this->attrs['lat'] : '?';
+		if ( !GMFn::isValidLatitude( $lat ) ) {
+			throw new GMFnException( wfMsg( 'gmfn-error-lat', htmlspecialchars( $lat ) ) );
+		}
+		if ( array_key_exists( 'lng', $this->attrs ) ) {
+			$lng = $this->attrs['lng'];
+		} elseif ( array_key_exists( 'lon', $this->attrs ) ) {
+			// compatibility to alpha versions
+			$lng = $this->attrs['lng'] = $this->attrs['lon'];
+			unset( $this->attrs['lon'] );
+		} else {
+			$lng = '?';
+		}
+		if ( !GMFn::isValidLongitude( $lng ) ) {
+			throw new GMFnException( wfMsg( 'gmfn-error-lng', htmlspecialchars( $lng ) ) );
+		}
+	}
+
+	/**
+	 * Returns html repsesentation of current map.
+	 */
 	function __toString() {
 		try {
-			# validate latitude / longitude
-			$lat = array_key_exists( 'lat', $this->attrs ) ? $this->attrs['lat'] : '?';
-			if ( !GMFn::isValidLatitude( $lat ) ) {
-				throw new GMFnException( wfMsg( 'gmfn-error-lat', htmlspecialchars( $lat ) ) );
+			$this->validateLatLng();
+			# xml attributes are valid, now add markers text;
+			# also checks marker text for syntax errors.
+			foreach ( $this->rawMarkers as $rawMarker ) {
+				GMFnMarkers::add( $rawMarker );
 			}
-			if ( array_key_exists( 'lng', $this->attrs ) ) {
-				$lng = $this->attrs['lng'];
-			} elseif ( array_key_exists( 'lon', $this->attrs ) ) {
-				// compatibility to alpha versions
-				$lng = $this->attrs['lng'] = $this->attrs['lon'];
-				unset( $this->attrs['lon'] );
-			} else {
-				$lng = '?';
-			}
-			if ( !GMFn::isValidLongitude( $lng ) ) {
-				throw new GMFnException( wfMsg( 'gmfn-error-lng', htmlspecialchars( $lng ) ) );
-			}
-			# xml attributes are valid, now check inner text
-			foreach ( $this->inputs as $input ) {
-				GMFnMarkers::add( $input );
-			}
-			# generate output
+			# generate html output
 			return $this->generateOutput();
 		} catch( GMFnException $e ) {
 			return '<strong class="error">' . $e->getMessage() . '</strong>';
 		}
 	}
 
+	/**
+	 * Sanitizes 'width' or 'height' parser function attribute
+	 * in the limited subset of CSS.
+	 * Also imposes specified min,max limits of dimension according
+	 * to it's CSS units type.
+	 * @param $dim string
+	 *   attribute key: 'width' or 'height'
+	 * @return sanitized CSS dimension value (string)
+	 */
 	function getDivDimension( $dim ) {
 		$matches = array();
-		# select dimension
+		# get a reference to dimension bounds
 		$mb = &self::$mapBounds[$dim];
 		if ( !array_key_exists( $dim, $this->attrs ) ||
 				!preg_match( '/^(\d{1,4})(%|[A-Za-z]+|)$/', $this->attrs[$dim], $matches ) ) {
 			# set default value
 			return $mb['def'];
 		}
-		# find out the type of dimension
+		# find out the units type of dimension
 		$type = ($matches[2] === '') ? 'px' : $matches[2];
-		# whether the specified type is supported for dimension
+		# whether the specified units type is supported for dimension
 		if ( !array_key_exists( $type, $mb ) ) {
 			throw new GMFnException( wfMsg( "gmfn-error-{$dim}", $this->attrs[$dim] ) );
 		}
-		# whether the specified value fits into the bounds for corresponding type
+		# restrict units value into the bounds for corresponding units type
 		if ( $matches[1] < $mb[$type]['min'] ) {
 			return $mb[$type]['min'] . $type;
 		} elseif ( $matches[1] > $mb[$type]['max'] ) {
@@ -114,6 +134,11 @@ class GMFnMap {
 		return $matches[1] . $type;
 	}
 
+	/**
+	 * Get current map zoom value from 'zoom' attribute.
+	 * @return string
+	 *   value of map zoom
+	 */
 	function getZoom() {
 		if ( array_key_exists( 'zoom', $this->attrs ) &&
 			is_numeric( $this->attrs['zoom'] ) ) {
@@ -132,11 +157,19 @@ class GMFnMap {
 		return array_key_exists( $key, $this->attrs ) ? $this->attrs[$key] : '';
 	}
 
+	/**
+	 * Get div thumb class used for map alignment from 'align' attribute.
+	 * @return string
+	 *		CSS class name
+	 */
 	protected function getAlignClass() {
 		return ( !array_key_exists( 'align', $this->attrs ) || $this->attrs['align'] === 'right' ) ?
 			'tright' : 'tleft';
 	}
 
+	/**
+	 * Whether the current map is in 'edit' mode.
+	 */
 	function inEditMode() {
 		return array_key_exists( 'edit', $this->attrs ) && $this->attrs['edit'] != false;
 	}
@@ -145,7 +178,8 @@ class GMFnMap {
 		$mapTag = GMFn::MAP_TAG;
 		$width = $this->getDivDimension( 'width' );
 		$height = $this->getDivDimension( 'height' );
-		/* we do not apply floatval() anymore due to rounding errors */
+		/* we do not apply floatval() anymore due to base10/base2 inprecise conversion */
+		# associative array of html5 data attribute
 		$mapData = array(
 			'lat' => $this->attrs['lat'],
 			'lng' => $this->attrs['lng'],
@@ -173,7 +207,7 @@ class GMFnMap {
 		$innerStyle = "width:{$width}; height:{$height}; ";
 		$outerStyle = "width:{$width}; height:auto; ";
 		$alignClass = $this->getAlignClass();
-		if ( count( $markers = GMFnMarkers::generate( array_key_exists( 'edit', $this->attrs ) ) ) > 0 ) {
+		if ( count( $markers = GMFnMarkers::getData( array_key_exists( 'edit', $this->attrs ) ) ) > 0 ) {
 			$mapData['markers'] = $markers;
 		}
 		$mapDataStr = htmlspecialchars( FormatJson::encode( $mapData ) );

@@ -5,7 +5,7 @@
  *
  * @file
  * @ingroup Extensions
- * @version 0.1
+ * @version 0.1.1
  * @author Dmitriy Sintsov <questpc@rambler.ru>
  * @link https://www.mediawiki.org/wiki/Extension:GoogleMapsFn
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
@@ -20,10 +20,12 @@ if ( !defined( 'MEDIAWIKI' ) ) {
  */
 class GMFnMarkers {
 
+	// list of marker data
 	static protected $markers = array();
 
 	/**
-	 * Parsers {{#googlemap}} unnamed parameters into the list of marker data.
+	 * Convert {{#googlemap}} unnamed parameter into the marker data.
+	 * Adds marker data to the list.
 	 */
 	static function add( $input ) {
 		if ( !preg_match( '/^\s*(-?\d+\.\d+)\x20*,\x20*(-?\d+\.\d+)\s+(.+)\s*/s',
@@ -46,11 +48,14 @@ class GMFnMarkers {
 		self::$markers[$markerCount]['text'] = $matches[3];
 	}
 
-	static function generate( $edit ) {
-		if ( count( self::$markers ) == 0 ) {
-			return '';
-		}
+	/**
+	 * Return markers data (for all markers available)
+	 */
+	static function getData( $edit ) {
 		$result = array();
+		if ( count( self::$markers ) == 0 ) {
+			return $result;
+		}
 		foreach ( self::$markers as $marker ) {
 			$result[] = array(
 				'lat' => $marker['lat'],
