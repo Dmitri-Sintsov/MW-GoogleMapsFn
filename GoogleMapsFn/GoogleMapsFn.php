@@ -67,9 +67,17 @@ class GMFn {
 			'path' => 'view',
 			'dependencies' => 'ext.gmfn.startup'
 		),
+		'ext.gmfn.view.searchbox' => array(
+			'scripts' => 'searchbox.js',
+			'path' => 'view',
+			'dependencies' => 'ext.gmfn.startup'
+		),
 		'ext.gmfn.view.map' => array(
 			'scripts' => 'map.js',
-			'dependencies' => 'ext.gmfn.view.marker',
+			'dependencies' => array(
+				'ext.gmfn.view.marker',
+				'ext.gmfn.view.searchbox',
+			),
 			'path' => 'view'
 		),
 		'ext.gmfn.parameter.sanitizer' => array(

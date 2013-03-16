@@ -65,12 +65,9 @@ mw.gmfn.MapController = function( mapIdx, mapData ) {
 		);
 	});
 	if ( mapData.searchbox ) {
-		this.searchBoxInput = $('<input />')
-		.attr('autocomplete', 'off')
-		.addClass('gmfn_searchbox_input')
-		.get(0);
-		this.map.controls[$gm.ControlPosition.TOP_LEFT].push( this.searchBoxInput );
-		this.searchBox = new $gm.places.SearchBox( this.searchBoxInput );
+		// Do not create searchbox right now, otherwise flickering may be seen
+		// during searchbox resize in 'idle' event handler.
+		this.hasSearchBox = true;
 	}
 }
 
@@ -85,34 +82,16 @@ _MapController.view_bindEditor = function() {
 	this.bindIdle();
 }
 
-_MapController.resizeSearchBox = function() {
-	if ( typeof this.searchBox === 'undefined' ) {
-		return;
-	}
-	// calculate proper width of our SearchBox
-	var sbWidth = this.$canvas.width();
-	// That's an ugly hack, however this.map.controls[$gm.ControlPosition.TOP_RIGHT]
-	// is empty even when map is already loaded - built-in controls are stored there.
-	var streetMapBtn = this.$canvas.find('div[title=\'Show street map\']');
-	var satelliteMapBtn = this.$canvas.find('div[title=\'Show satellite imagery\']');
-	sbWidth -= (streetMapBtn.length > 0) ? streetMapBtn.width() : 0;
-	sbWidth -= (satelliteMapBtn.length > 0) ? satelliteMapBtn.width() : 0;
-	sbWidth -= 100;
-	if ( sbWidth > 600 ) {
-		sbWidth = 600;
-	} else if ( sbWidth < 200 ) {
-		sbWidth = 200;
-	}
-	$(this.searchBoxInput).width(sbWidth);
-}
-
 /**
  * Bind map idle logic (when map is loaded).
  */
 _MapController.bindIdle = function() {
 	var myself = this;
-	google.maps.event.addListener(this.map, 'idle', function() {
-		myself.resizeSearchBox.call( myself );
+	google.maps.event.addListenerOnce(this.map, 'idle', function() {
+		if ( myself.hasSearchBox ) {
+			myself.searchBox = new mw.gmfn.SearchBoxController(myself);
+			myself.searchBox.create.call(myself.searchBox);
+		}
 	});
 }
 
