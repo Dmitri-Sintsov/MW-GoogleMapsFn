@@ -57,7 +57,7 @@ _SearchBoxController.remove = function() {
 	google.maps.event.clearListeners(this.searchBox, 'places_changed');
 	this.searchBox.unbindAll();
 	delete this.searchBox;
-	this.searchBoxInput.remove();
+	$(this.searchBoxInput).remove();
 	delete this.markers;
 	delete this.searchBoxInput;
 }
