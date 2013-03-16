@@ -212,15 +212,20 @@ _MapController.bindCenter = function() {
 }
 
 _MapController.bindSearchBox = function() {
-	var myself = this.searchBox;
+	var myself = this;
+	var searchBox = myself.searchBox;
 	var switchSel = '#gmfn_searchbox_switch_' + this.Idx;
 	$(switchSel)
 	.change(function(ev) {
+		var options = {};
 		if ( ev.target.checked ) {
-			myself.create.call(myself);
+			searchBox.create.call(searchBox);
+			options['searchbox'] = 1;
 		} else {
-			myself.remove.call(myself);
+			searchBox.remove.call(searchBox);
+			options['searchbox'] = null;
 		}
+		myself.tagHeader.update( options );
 	})
 	.prop('checked',this.hasSearchBox);
 }
