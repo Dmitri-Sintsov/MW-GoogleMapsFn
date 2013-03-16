@@ -35,10 +35,10 @@ var _toolbar = {};
  * @param text  label.innerText()
  */
 _toolbar.generateInputWrapper = function( wrapperAttrs, inputAttrs, text ) {
-	// next assignment is necessary, because immediate return of element will be converted to NaN
 	if ( typeof inputAttrs.id === 'undefined' ) {
 		throw new Error( 'Cannot generate label for input because input.id is not present in Toolbar.generateInputWrapper' );
 	}
+	// next assignment is necessary, because immediate return of element will be converted to NaN
 	var result =
 	$h.element( 'span',
 		wrapperAttrs,
@@ -103,13 +103,11 @@ _toolbar.generate = function() {
 				[
 					[ 'td', {'colspan': 2}, new $h.Raw( this.generateInputWrapper(
 						{'class': 'gmfn_drag_switch'},
-						// id is used for label only
 						{'type': 'checkbox', 'id': 'gmfn_drag_switch_'+this.mc.Idx, 'tabindex': -2},
 						mw.msg( 'gmfn-change-center' )
 					) ) ],
 					[ 'td', {'colspan': 4}, new $h.Raw( this.generateInputWrapper(
 						{'class': 'gmfn_resize_switch'},
-						// id is used for label only
 						{'type': 'checkbox', 'id': 'gmfn_resize_switch_'+this.mc.Idx, 'tabindex': -1},
 						mw.msg( 'gmfn-resize-map' )
 					) ) ]
@@ -152,10 +150,17 @@ _toolbar.generate = function() {
 			] ) +
 			this.generateTable( [
 				[
+					[ 'th', {}, mw.msg( 'gmfn-edit-searchbox' ) ],
 					[ 'th', {}, mw.msg( 'gmfn-edit-align' ) ],
 					[ 'th', {}, mw.msg( 'gmfn-edit-zoom' ) ]
 				],
 				[
+					[ 'td', {}, new $h.Raw( this.generateInputWrapper(
+						{'class': 'gmfn_searchbox_switch'},
+						// id is used for label only
+						{'type': 'checkbox', 'id': 'gmfn_searchbox_switch_'+this.mc.Idx, 'tabindex': -3},
+						mw.msg( 'gmfn-switch-searchbox' )
+					) ) ],
 					new $h.Raw( this.generateJSON(
 						{'class': 'gmfn_edit_align'},
 						[ // array for Toolbar.createButtonset()

@@ -31,6 +31,7 @@ _MapController.edit_bindEditor = function() {
 	this.dimension = {};
 	this.insertEditorContainer();
 	this.bindIdle();
+	this.bindSearchBox();
 	this.bindDialog();
 	this.bindLines();
 	this.bindAddMarker();

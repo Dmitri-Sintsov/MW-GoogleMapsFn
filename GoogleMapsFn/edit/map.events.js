@@ -138,7 +138,7 @@ _MapController.bindResizable = function() {
 		if ( event.type === 'resizestop' ) {
 			// update the map
 			google.maps.event.trigger( myself.map, 'resize' );
-			myself.resizeSearchBox.call( myself );
+			myself.searchBox.resize.call( myself.searchBox );
 		}
 	});
 }
@@ -209,6 +209,20 @@ _MapController.bindCenter = function() {
 			myself.viewCenter( this.getCenter() );
 		}
 	});
+}
+
+_MapController.bindSearchBox = function() {
+	var myself = this.searchBox;
+	var switchSel = '#gmfn_searchbox_switch_' + this.Idx;
+	$(switchSel)
+	.change(function(ev) {
+		if ( ev.target.checked ) {
+			myself.create.call(myself);
+		} else {
+			myself.remove.call(myself);
+		}
+	})
+	.prop('checked',this.hasSearchBox);
 }
 
 _MapController.bindAddMarker = function() {

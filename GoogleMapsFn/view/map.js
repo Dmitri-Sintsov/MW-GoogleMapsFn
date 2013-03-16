@@ -55,6 +55,7 @@ mw.gmfn.MapController = function( mapIdx, mapData ) {
 		center: new $gm.LatLng(this.lat, this.lng),
 		mapTypeId: $gm.MapTypeId.ROADMAP
 	});
+	this.hasSearchBox = mapData.searchbox;
 	// create editor DOM, and map click handler, when needed
 	this.bindEditor();
 	// Create the collection of markers in this map.
@@ -64,11 +65,6 @@ mw.gmfn.MapController = function( mapIdx, mapData ) {
 			new mw.gmfn.MarkerController( myself, markerIdx, markerData )
 		);
 	});
-	if ( mapData.searchbox ) {
-		// Do not create searchbox right now, otherwise flickering may be seen
-		// during searchbox resize in 'idle' event handler.
-		this.hasSearchBox = true;
-	}
 }
 
 // list of prototypes to extend mw.gmfn.MapController
@@ -86,11 +82,13 @@ _MapController.view_bindEditor = function() {
  * Bind map idle logic (when map is loaded).
  */
 _MapController.bindIdle = function() {
-	var myself = this;
+	// Do not show searchbox right now, otherwise flickering may be seen
+	// during searchbox resize in 'idle' event handler.
+	this.searchBox = new mw.gmfn.SearchBoxController(this);
+	var myself = this.searchBox;
 	google.maps.event.addListenerOnce(this.map, 'idle', function() {
-		if ( myself.hasSearchBox ) {
-			myself.searchBox = new mw.gmfn.SearchBoxController(myself);
-			myself.searchBox.create.call(myself.searchBox);
+		if ( myself.parent.hasSearchBox ) {
+			myself.create.call(myself);
 		}
 	});
 }

@@ -69,7 +69,7 @@ _SearchBoxController.resize = function() {
 	// calculate proper width of our SearchBox
 	var sbWidth = this.parent.$canvas.width();
 	// That's an ugly hack, however this.parent.map.controls[$gm.ControlPosition.TOP_RIGHT]
-	// is empty even when map is already loaded - built-in controls are stored there.
+	// is empty even when map is already loaded - built-in controls are not stored there.
 	var streetMapBtn = this.parent.$canvas.find('div[title=\'Show street map\']');
 	var satelliteMapBtn = this.parent.$canvas.find('div[title=\'Show satellite imagery\']');
 	sbWidth -= (streetMapBtn.length > 0) ? streetMapBtn.width() : 0;
