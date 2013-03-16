@@ -138,6 +138,7 @@ _MapController.bindResizable = function() {
 		if ( event.type === 'resizestop' ) {
 			// update the map
 			google.maps.event.trigger( myself.map, 'resize' );
+			myself.resizeSearchBox.call( myself );
 		}
 	});
 }

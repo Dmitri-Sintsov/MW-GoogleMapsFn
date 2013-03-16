@@ -30,6 +30,7 @@ _MapController.edit_bindEditor = function() {
 	// dimension instances for 'width' and 'height' will be stored here.
 	this.dimension = {};
 	this.insertEditorContainer();
+	this.bindIdle();
 	this.bindDialog();
 	this.bindLines();
 	this.bindAddMarker();

@@ -127,3 +127,13 @@ div.gmfn_showhide input[type="text"].ui-button, div.gmfn_showhide textarea.ui-bu
 div.gmfn_resizable {
 	border: 1px dashed blue;
 }
+
+input.gmfn_searchbox_input {
+	border: 1px solid rgb(113, 123, 135);
+	font-family: Arial, sans-serif;
+	/* width: 345px; */
+	-webkit-box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px;
+	box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px;
+	margin-top: 5px;
+	padding: 2px 5px 3px 5px;
+}

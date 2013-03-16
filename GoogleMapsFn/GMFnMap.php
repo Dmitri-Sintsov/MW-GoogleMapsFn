@@ -174,6 +174,13 @@ class GMFnMap {
 		return array_key_exists( 'edit', $this->attrs ) && $this->attrs['edit'] != false;
 	}
 
+	/**
+	 * Whether the current map shound display SearchBox.
+	 */
+	function hasSearchBox() {
+		return array_key_exists( 'searchbox', $this->attrs ) && $this->attrs['searchbox'] != false;
+	}
+
 	protected function generateOutput() {
 		$mapTag = GMFn::MAP_TAG;
 		$width = $this->getDivDimension( 'width' );
@@ -185,6 +192,14 @@ class GMFnMap {
 			'lng' => $this->attrs['lng'],
 			'zoom' => $this->getZoom()
 		);
+		if ( $this->hasSearchBox() ) {
+			$mapData['searchbox'] = 1;
+			if ( array_key_exists( 'searchbox.lat', $this->attrs ) &&
+				array_key_exists( 'searchbox.lng', $this->attrs ) ) {
+				$mapData['searchbox.lat'] = $this->attrs['searchbox.lat'];
+				$mapData['searchbox.lng'] = $this->attrs['searchbox.lng'];
+			}
+		}
 		if ( $this->inEditMode() ) {
 			// edit mode;
 			$mapData['edit'] = 1;

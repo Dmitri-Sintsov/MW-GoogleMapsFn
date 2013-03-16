@@ -36,8 +36,6 @@ mw.gmfn.createMapControllers = function() {
  * HTML 5 data attribute '.gmfn_canvas[gmfn]'
  */
 mw.gmfn.getMaps = function() {
-	var isEdit = false;
-
 	// Extract JSON data from every .gmfn_canvas element HTML5 data attribute
 	$('.gmfn_canvas').each(function( i, el ) {
 		// Find mapIdx (part of element id)
@@ -47,10 +45,6 @@ mw.gmfn.getMaps = function() {
 		}
 		mapIdx = mapIdx[1];
 		var mapData = $(el).data( 'gmfn' );
-		if ( mapData.edit ) {
-			// Whether edit inerface has to be loaded
-			isEdit = true;
-		}
 		// Some JSON mapData may do not have markers defined
 		if ( !mapData.markers ) {
 			mapData.markers = [];
@@ -69,7 +63,7 @@ mw.gmfn.getMaps = function() {
 }
 
 // dynamically loads google maps v3
-$.getScript('http://maps.google.com/maps/api/js?sensor=true&callback=mw.gmfn.getMaps').done( function (script, textStatus) {
+$.getScript('http://maps.google.com/maps/api/js?libraries=places&sensor=true&callback=mw.gmfn.getMaps').done( function (script, textStatus) {
 }).fail( function (jqxhr, settings, exception) {
         throw new Error( 'Cannot find Google Maps JavaScript API v3. Make sure you have access to internet.' );
 });
