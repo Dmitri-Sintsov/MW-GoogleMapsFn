@@ -19,7 +19,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 $wgExtensionCredits['parserhook'][] = array( 
 	'path' => __FILE__,
 	'name' => 'GoogleMapsFn',
-	'version' => '0.1.1',
+	'version' => '0.2.0',
 	'author' => 'Dmitriy Sintsov',
 	'descriptionmsg' => 'gmfn-desc',
 	'url' => 'https://www.mediawiki.org/wiki/Extension:GoogleMapsFn'
