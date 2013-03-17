@@ -37,11 +37,16 @@ _SearchBoxController.create = function() {
 	}
 	var myself = this;
 	this.searchBoxInput = $('<input />')
-	.attr('autocomplete', 'off')
+	.attr({
+		'type': 'text',
+		'placeholder': mw.msg('gmfn-searchbox-placeholder'),
+		'autocomplete': 'off'
+	})
 	.addClass('gmfn_searchbox_input')
 	.get(0);
 	this.markers = [];
 	this.searchBox = new $gm.places.SearchBox( this.searchBoxInput );
+	this.searchBox.bindTo('bounds', this.parent.map);
 	google.maps.event.addListener(this.searchBox, 'places_changed', function() {
 		myself.showPlaces.call(myself);
 	});

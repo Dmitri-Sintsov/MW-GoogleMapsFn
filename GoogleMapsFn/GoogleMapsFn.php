@@ -70,6 +70,9 @@ class GMFn {
 		'ext.gmfn.view.searchbox' => array(
 			'scripts' => 'searchbox.js',
 			'path' => 'view',
+			'messages' => array(
+				'gmfn-searchbox-placeholder',
+			),
 			'dependencies' => 'ext.gmfn.startup'
 		),
 		'ext.gmfn.view.map' => array(

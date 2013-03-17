@@ -194,11 +194,6 @@ class GMFnMap {
 		);
 		if ( $this->hasSearchBox() ) {
 			$mapData['searchbox'] = 1;
-			if ( array_key_exists( 'searchbox.lat', $this->attrs ) &&
-				array_key_exists( 'searchbox.lng', $this->attrs ) ) {
-				$mapData['searchbox.lat'] = $this->attrs['searchbox.lat'];
-				$mapData['searchbox.lng'] = $this->attrs['searchbox.lng'];
-			}
 		}
 		if ( $this->inEditMode() ) {
 			// edit mode;

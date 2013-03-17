@@ -34,6 +34,7 @@ $messages['en'] = array(
 	'gmfn-edit-caption' => 'Caption',
 	'gmfn-edit-searchbox' => 'SearchBox',
 	'gmfn-switch-searchbox' => 'Use SearchBox',
+	'gmfn-searchbox-placeholder' => 'Search locations',
 	'gmfn-align-default' => 'Default',
 	'gmfn-align-left' => 'Left',
 	'gmfn-align-right' => 'Right',
@@ -46,3 +47,11 @@ $messages['en'] = array(
 	'gmfn-error-height' => 'Invalid or omitted value of height: $1',
 	'gmfn-error-empty-marker-description' => 'Map marker description cannot be empty',
 );
+
+/** Русский (Russian)
+ * @author QuestPC
+ */
+$messages['ru'] = array(
+	'gmfn-searchbox-placeholder' => 'Поиск мест',
+);
+
