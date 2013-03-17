@@ -4,6 +4,7 @@ lat=55.773882
 | zoom =  16  
 |width=675
 |height=250
+|searchbox=1
 |caption=Hello, [[world]]!
 * How
 * are
