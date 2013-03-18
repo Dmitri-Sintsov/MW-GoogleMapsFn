@@ -265,7 +265,8 @@ _MapController.insertEditorContainer = function() {
 			'align': this.alignAccessor(),
 			'caption': this.captionAccessor(),
 			'width': this.getCssDimension('width').getString(),
-			'searchbox':  this.hasSearchBox ? 1 : null,
+			'height': this.getCssDimension('height').getString(),
+			'searchbox': this.hasSearchBox ? 1 : null,
 		}
 	);
 	// IE8 fix

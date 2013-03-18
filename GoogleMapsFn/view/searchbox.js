@@ -73,9 +73,9 @@ _SearchBoxController.resize = function() {
 	}
 	// this.searchBoxInput width.
 	var sbWidth;
-	// this.searchBoxInput margin: delta of canvas width.
-	var sbMargin = 94;
 	var $canvas = this.parent.$canvas;
+	// this.searchBoxInput margin: delta of canvas width.
+	var sbMargin = $canvas.width() > 300 ? 94 : 80;
 	/*
 	// That's an ugly hack, however this.parent.map.controls[$gm.ControlPosition.TOP_RIGHT]
 	// is empty even when map is already loaded: built-in controls are not stored there.
@@ -85,8 +85,8 @@ _SearchBoxController.resize = function() {
 		return $(this).css('overflow') === 'hidden' && $(this).css('font-family') === 'Arial, sans-serif';
 	});
 	*/
-	if ( $canvas.height() < 370 ) {
-		// Low height canvas has only TOP_RIGHT map type controls.
+	if ( $canvas.height() < 370 || $canvas.width() < 400 ) {
+		// Low height / width canvas has only TOP_RIGHT map type controls.
 		sbMargin += 100;
 	} else {
 		// Long height canvas also has TOP_LEFT four panning buttons.
@@ -96,8 +96,8 @@ _SearchBoxController.resize = function() {
 	// Limit the width of searchBoxInput.
 	if ( sbWidth > 600 ) {
 		sbWidth = 600;
-	} else if ( sbWidth < 200 ) {
-		sbWidth = 200;
+	} else if ( sbWidth < 100 ) {
+		sbWidth = 100;
 	}
 	$(this.searchBoxInput).width(sbWidth);
 }
