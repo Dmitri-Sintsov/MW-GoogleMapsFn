@@ -46,7 +46,7 @@ _SearchBoxController.create = function() {
 	.get(0);
 	this.markers = [];
 	this.searchBox = new $gm.places.SearchBox( this.searchBoxInput );
-	this.searchBox.bindTo('bounds', this.parent.map);
+	// this.searchBox.bindTo('bounds', this.parent.map);
 	google.maps.event.addListener(this.searchBox, 'places_changed', function() {
 		myself.showPlaces.call(myself);
 	});
@@ -129,7 +129,7 @@ _SearchBoxController.showPlaces = function() {
 		this.markers.push(marker);
 		bounds.extend(place.geometry.location);
 	}
-	this.parent.map.fitBounds(bounds);
+	this.parent.fitMinZoom(bounds);
 }
 
 $.extend( mw.gmfn.SearchBoxController.prototype, _SearchBoxController );

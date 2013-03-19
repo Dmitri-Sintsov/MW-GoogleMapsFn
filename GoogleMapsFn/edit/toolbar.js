@@ -103,7 +103,7 @@ _toolbar.generate = function() {
 				[
 					[ 'td', {'colspan': 2}, new $h.Raw( this.generateInputWrapper(
 						{'class': 'gmfn_drag_switch'},
-						{'type': 'checkbox', 'id': 'gmfn_drag_switch_'+this.mc.Idx, 'tabindex': -2},
+						{'type': 'checkbox', 'id': 'gmfn_drag_switch_'+this.mc.Idx, 'checked': 'checked', 'tabindex': -2},
 						mw.msg( 'gmfn-change-center' )
 					) ) ],
 					[ 'td', {'colspan': 4}, new $h.Raw( this.generateInputWrapper(

@@ -48,6 +48,7 @@ mw.gmfn.MapController = function( mapIdx, mapData ) {
 	 */
 	this.lat = mapData.lat;
 	this.lng = mapData.lng;
+	this.minFitZoom = 15;
 	// Create the map
 	this.map = new $gm.Map( this.$canvas.get(0), {
 		// we store zoom only in map
@@ -91,6 +92,15 @@ _MapController.bindIdle = function() {
 			myself.create.call(myself);
 		}
 	});
+}
+
+_MapController.fitMinZoom = function( bounds ) {
+	var origZoom = this.map.getZoom();
+	this.map.fitBounds(bounds);
+	var fitZoom = this.map.getZoom();
+	if ( fitZoom > origZoom && fitZoom > this.minFitZoom ) {
+		this.map.setZoom(this.minFitZoom);
+	}
 }
 
 $.extend( mw.gmfn.MapController.prototype, _MapController );

@@ -52,6 +52,29 @@ $messages['en'] = array(
  * @author QuestPC
  */
 $messages['ru'] = array(
+	'gmfn-desc' => 'Определяет функцию парсера для управления картами Google v3',
+	'gmfn-edit-marker' => 'Нажмите для правки маркера',
+	'gmfn-view-marker' => 'Нажмите для просмотра маркера',
+	'gmfn-remove-marker' => 'Нажмите для удаления маркера',
+	'gmfn-edit-lat' => 'Широта',
+	'gmfn-edit-lng' => 'Долгота',
+	'gmfn-edit-zoom' => 'Приближение',
+	'gmfn-edit-width' => 'Ширина',
+	'gmfn-edit-height' => 'Высота',
+	'gmfn-edit-align' => 'Выравнивание',
+	'gmfn-edit-caption' => 'Описание',
+	'gmfn-edit-searchbox' => 'Поле поиска',
+	'gmfn-switch-searchbox' => 'Включить поле поиска',
 	'gmfn-searchbox-placeholder' => 'Поиск мест',
+	'gmfn-align-default' => 'По умолчанию',
+	'gmfn-align-left' => 'Влево',
+	'gmfn-align-right' => 'Вправо',
+	'gmfn-show-code' => 'Показать код',
+	'gmfn-change-center' => 'Двигайте карту для изменения центра',
+	'gmfn-resize-map' => 'Двигайте границу карты для изменения размера',
+	'gmfn-error-lat' => 'Неверное или отсутствующее значение широты: $1',
+	'gmfn-error-lng' => 'Неверное или отсутствующее значение долготы: $1',
+	'gmfn-error-width' => 'Неверное или отсутствующее значение ширины: $1',
+	'gmfn-error-height' => 'Неверное или отсутствующее значение высоты: $1',
+	'gmfn-error-empty-marker-description' => 'Описание маркера не может быть пустым',
 );
-
