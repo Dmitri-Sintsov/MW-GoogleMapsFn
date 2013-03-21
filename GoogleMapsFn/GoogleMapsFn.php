@@ -141,7 +141,6 @@ class GMFn {
 				'gmfn-edit-height',
 				'gmfn-edit-align',
 				'gmfn-edit-caption',
-				'gmfn-edit-searchbox',
 				'gmfn-switch-edit',
 				'gmfn-switch-searchbox',
 				'gmfn-align-default',
