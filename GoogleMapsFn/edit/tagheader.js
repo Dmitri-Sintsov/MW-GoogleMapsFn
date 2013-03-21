@@ -39,7 +39,7 @@ _TagHeader.defaultOptions = {
 	'width': { 'value': null, 'nl': false },
 	'height': { 'value': null, 'nl': false },
 	'searchbox': { 'value': null, 'nl': false },
-	'edit': { 'value': '1', 'nl': false },
+	'edit': { 'value': null, 'nl': false },
 	'caption': { 'value': null, 'nl': true }
 }
 

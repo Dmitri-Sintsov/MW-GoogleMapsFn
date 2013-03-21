@@ -173,8 +173,10 @@ _MarkerController.edit_openWindow = function() {
 	);
 	this.iw.setContent( content );
 	this.iw.open( this.parent.map, this.marker  );
-	// open map editor dialog
-	this.parent.displayDialog({ 'display': true });
+	// open map editor dialog if map edit mode is active
+	if ( this.parent.$editSwitch.prop('checked') ) {
+		this.parent.displayDialog({ 'display': true });
+	}
 	// infowinfow content textarea logic can be bound only when dom is ready
 	$gm.event.addListener( this.iw, 'domready', function () {
 		myself.setEditLine();

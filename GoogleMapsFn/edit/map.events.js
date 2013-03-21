@@ -211,11 +211,21 @@ _MapController.bindCenter = function() {
 	});
 }
 
+_MapController.bindEditSwitch = function() {
+	var myself = this;
+	this.$editSwitch = $('#gmfn_edit_switch_' + this.Idx);
+	this.$editSwitch
+	.change(function(ev) {
+		var options = ev.target.checked ?
+			{'edit' : 1} : {'edit' : null};
+		myself.tagHeader.update( options );
+	})
+}
+
 _MapController.bindSearchBox = function() {
 	var myself = this;
 	var searchBox = myself.searchBox;
-	var switchSel = '#gmfn_searchbox_switch_' + this.Idx;
-	$(switchSel)
+	$('#gmfn_searchbox_switch_' + this.Idx)
 	.change(function(ev) {
 		var options = {};
 		if ( ev.target.checked ) {
@@ -247,8 +257,10 @@ _MapController.bindDialog = function() {
 	});
 	// Update show / hide checkbox when dialog is closed.
 	this.$dialog.bind('dialogclose', function(event,ui) {
-		// turn off editMode for all markers
-		myself.markersEditMode( -1 );
+		if ( myself.$editSwitch.prop('checked') ) {
+			// turn off editMode for all markers
+			myself.markersEditMode( -1 );
+		}
 		myself.displayDialog({ 'display': false, 'inProgress': true });
 	});
 }

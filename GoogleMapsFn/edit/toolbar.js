@@ -150,17 +150,10 @@ _toolbar.generate = function() {
 			] ) +
 			this.generateTable( [
 				[
-					[ 'th', {}, mw.msg( 'gmfn-edit-searchbox' ) ],
 					[ 'th', {}, mw.msg( 'gmfn-edit-align' ) ],
 					[ 'th', {}, mw.msg( 'gmfn-edit-zoom' ) ]
 				],
 				[
-					[ 'td', {}, new $h.Raw( this.generateInputWrapper(
-						{'class': 'gmfn_searchbox_switch'},
-						// id is used for label only
-						{'type': 'checkbox', 'id': 'gmfn_searchbox_switch_'+this.mc.Idx, 'tabindex': -3},
-						mw.msg( 'gmfn-switch-searchbox' )
-					) ) ],
 					new $h.Raw( this.generateJSON(
 						{'class': 'gmfn_edit_align'},
 						[ // array for Toolbar.createButtonset()
@@ -175,6 +168,22 @@ _toolbar.generate = function() {
 							'min':0, 'max':21, 'step':1
 						}
 					) )
+				]
+			] ) +
+			this.generateTable( [
+				[
+					[ 'td', {}, new $h.Raw( this.generateInputWrapper(
+						{'class': 'gmfn_edit_switch'},
+						// id is used for label only
+						{'type': 'checkbox', 'id': 'gmfn_edit_switch_'+this.mc.Idx, 'tabindex': -4},
+						mw.msg( 'gmfn-switch-edit' ) ) )
+					],
+					[ 'td', {}, new $h.Raw( this.generateInputWrapper(
+						{'class': 'gmfn_searchbox_switch'},
+						// id is used for label only
+						{'type': 'checkbox', 'id': 'gmfn_searchbox_switch_'+this.mc.Idx, 'tabindex': -3},
+						mw.msg( 'gmfn-switch-searchbox' ) ) )
+					]
 				]
 			] ) +
 			this.generateTable( [

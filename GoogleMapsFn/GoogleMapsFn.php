@@ -142,6 +142,7 @@ class GMFn {
 				'gmfn-edit-align',
 				'gmfn-edit-caption',
 				'gmfn-edit-searchbox',
+				'gmfn-switch-edit',
 				'gmfn-switch-searchbox',
 				'gmfn-align-default',
 				'gmfn-align-left',
