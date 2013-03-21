@@ -217,7 +217,8 @@ class GMFnMap {
 		$innerStyle = "width:{$width}; height:{$height}; ";
 		$outerStyle = "width:{$width}; height:auto; ";
 		$alignClass = $this->getAlignClass();
-		if ( count( $markers = GMFnMarkers::getData( array_key_exists( 'edit', $this->attrs ) ) ) > 0 ) {
+		$markers = GMFnMarkers::getData( $this->inEditMode() );
+		if ( count( $markers ) > 0 ) {
 			$mapData['markers'] = $markers;
 		}
 		$mapDataStr = htmlspecialchars( FormatJson::encode( $mapData ) );

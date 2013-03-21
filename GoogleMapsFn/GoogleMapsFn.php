@@ -251,14 +251,14 @@ class GMFn {
 		return self::isFloat( $lng ) && $lng >= -180 && $lng <= 180;
 	}
 
-	static protected function getOutput() {
+	static protected function loadOutput() {
 		if ( !is_object( self::$out ) ) {
 			# last resort
 			self::$out = RequestContext::getMain()->getOutput();
 		}
 	}
 
-	static protected function getTitle() {
+	static protected function loadTitle() {
 		if ( !is_object( self::$title ) ) {
 			self::$title = self::$out->getContext()->getTitle();
 		}
@@ -269,9 +269,9 @@ class GMFn {
 	 * @param  $parser Parser
 	 */
 	static function onParserFirstCallInit( $parser ) {
-		self::$parser = clone $parser;
-		self::getOutput();
-		self::getTitle();
+		self::$parser = $parser;
+		self::loadOutput();
+		self::loadTitle();
 		# setup parser function hook
 		$parser->setFunctionHook( 'googlemap', array( __CLASS__, 'renderMap' ), SFH_OBJECT_ARGS );
 		return true;
@@ -315,7 +315,7 @@ class GMFn {
 	 * cached page loads).
 	 */
 	static protected function checkModule() {
-		self::getTitle();
+		self::loadTitle();
 		# MessageBlobStore::clear();
 		# do not check the text twice;
 		# also simple sanity check for CLI calls and special pages (if any)
@@ -365,7 +365,7 @@ class GMFn {
 	 * Cached page load. If there is a better hook - let me know.
 	 */
 	static function onOutputPageCheckLastModified( &$modifiedTimes ) {
-		self::getOutput();
+		self::loadOutput();
 		return self::checkModule();
 	}
 
@@ -374,7 +374,8 @@ class GMFn {
 	 * Used to process map markers wikitext.
 	 */
 	static function parseWikiText( $text ) {
-		return self::$parser->parse( $text, self::$title, new ParserOptions() )->getText();
+		$parser = clone self::$parser;
+		return $parser->parse( $text, self::$title, new ParserOptions() )->getText();
 	}
 
 	/**
